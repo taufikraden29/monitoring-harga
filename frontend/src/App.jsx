@@ -4,9 +4,9 @@ function App() {
   const [data, setData] = useState({});
 
   useEffect(() => {
-    fetch('/hasil.json')
-      .then((res) => res.json())
-      .then((data) => setData(data));
+    fetch('/api/scraper')
+      .then(res => res.json())
+      .then(data => setData(data));
   }, []);
 
   const getBadgeColor = (status) => {
