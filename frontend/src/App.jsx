@@ -2,11 +2,32 @@ import { useEffect, useState } from 'react';
 
 function App() {
   const [data, setData] = useState({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/')
+    fetch('/api/scraper')
       .then(res => res.json())
-      .then(data => setData(data));
+      .then(rawData => {
+        // Kelompokkan berdasarkan Keterangan Produk
+        const grouped = {};
+        rawData.forEach(item => {
+          const group = item.keterangan.split(' ')[0]; // Misal: "AXIS 10K" ambil "AXIS"
+          if (!grouped[group]) {
+            grouped[group] = [];
+          }
+          grouped[group].push({
+            ...item,
+            harga: parseFloat(item.harga.replace('.', '').replace(',', '.')) || 0,
+            perubahan: item.perubahan || '',
+          });
+        });
+        setData(grouped);
+        setLoading(false);
+      })
+      .catch(() => {
+        setData({});
+        setLoading(false);
+      });
   }, []);
 
   const getBadgeColor = (status) => {
@@ -15,6 +36,10 @@ function App() {
     if (status?.includes('Baru')) return 'bg-blue-100 text-blue-700';
     return 'bg-gray-100 text-gray-700';
   };
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center text-gray-500">Loading...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
