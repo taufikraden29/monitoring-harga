@@ -1,0 +1,10 @@
+{
+  "cron": {
+    "jobs": [
+      {
+        "path": "/api/scraper",
+        "schedule": "*/1 * * * *"
+      }
+    ]
+  }
+}
